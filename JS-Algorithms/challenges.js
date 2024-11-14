@@ -12,17 +12,18 @@ Example:
 Invoking "readableTime(3690)" should return "01:01:30" (HH:MM:SS)
 ***** */
 
+const getFormattedNumber = (time) => (time < 10 ? `0${time}` : time);
+
 const readableTime = (seconds) => {
   const hours = Math.floor(seconds / 3600);
-  seconds = seconds - hours * 3600;
-  const minutes = Math.floor(seconds / 60);
-  seconds = seconds - minutes * 60;
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
 
-  const GetFormattedNumber = (time) => (time < 10 ? `0${time}` : time);
+  const formattedHours = getFormattedNumber(hours);
+  const formattedMinutes = getFormattedNumber(minutes);
+  const formattedSeconds = getFormattedNumber(remainingSeconds);
 
-  return `${GetFormattedNumber(hours)}:${GetFormattedNumber(
-    minutes
-  )}:${GetFormattedNumber(seconds)}`;
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
 
 readableTime(458);
@@ -49,27 +50,23 @@ Invoking "circularArray(2)" should return "["Island", "Japan", "Israel", "German
 
 const COUNTRY_NAMES = ["Germany", "Norway", "Island", "Japan", "Israel"];
 
+const getIndex = (oldIndex, countryNamesLength) =>
+  oldIndex > countryNamesLength ? oldIndex % countryNamesLength : oldIndex;
+
 const circularArray = (index) => {
-  // YOUR CODE HERE...
+  const countryCopy = [...COUNTRY_NAMES];
+  const countryNamesLength = countryCopy.length;
 
-  let COUNTRY_COPY = [...COUNTRY_NAMES];
-  const COUNTRY_NAMES_LENGHT = COUNTRY_COPY.length;
+  if (index === countryNamesLength) return [...countryCopy];
 
-  if (index === COUNTRY_NAMES_LENGHT) return [...COUNTRY_COPY];
+  const indexToReplace = getIndex(index, countryNamesLength);
 
-  const GetIndex = ({ OldIndex }) =>
-    OldIndex > COUNTRY_NAMES_LENGHT
-      ? OldIndex % COUNTRY_NAMES_LENGHT
-      : OldIndex;
-
-  const IndexToReplace = GetIndex({ OldIndex: index });
-
-  const SPLICED_ITEMS = COUNTRY_COPY.slice(0, IndexToReplace);
-  const FILTERED_ITEMS = COUNTRY_COPY.filter(
-    (item) => !SPLICED_ITEMS.includes(item)
+  const splicedItems = countryCopy.slice(0, indexToReplace);
+  const filteredItems = countryCopy.filter(
+    (item) => !splicedItems.includes(item)
   );
 
-  return [...FILTERED_ITEMS, ...SPLICED_ITEMS];
+  return [...filteredItems, ...splicedItems];
 };
 
 circularArray(2);
@@ -97,23 +94,26 @@ because 1^1 + 2^2 + 3^3 + 4^4 + 5^5 + 6^6 + 7^7 + 8^8 + 9^9 + 10^10 = 1040507131
 The last 3 digits for the sum of powers from 1 to 10 is "317"
 ***** */
 
+const power = (base, exponent) => {
+  let result = 1n;
+  for (let i = 0n; i < exponent; i++) {
+    result *= base;
+  }
+  return result;
+};
+
 const ownPower = (number, lastDigits) => {
-  const power = (base, exponent) => {
-    let result = 1n;
-    for (let i = 0n; i < exponent; i++) {
-      result *= base;
-    }
-    return result;
-  };
+  let sum = 0n;
 
-  const ArrayNumbers = Array.from({ length: number }, (_, i) =>
-    power(BigInt(i + 1), BigInt(i + 1))
-  );
+  for (let i = 0; i < number; i++) {
+    const number = BigInt(i + 1);
+    const power_number = power(number, number);
+    sum += power_number;
+  }
 
-  const NumberSum = ArrayNumbers.reduce((acc, elm) => acc + elm);
-  const SplicedNumberByDigits = NumberSum.toString().slice(lastDigits * -1);
+  const lastNumbersByDigits = sum.toString().slice(lastDigits * -1);
 
-  return SplicedNumberByDigits;
+  return lastNumbersByDigits;
 };
 
 ownPower(10, 3);
@@ -137,22 +137,28 @@ Invoking "digitSum(10)" should return "27".
 Since 10! === 3628800 and you sum 3 + 6 + 2 + 8 + 8 + 0 + 0
 ***** */
 
-const digitSum = (n) => {
-  // YOUR CODE HERE...
+const getFactorial = (n) => {
+  if (n === 0 || n === 1) return 1;
+  let result = 1n;
 
-  const GetFactorial = ({ n }) => {
-    return Array.from({ length: n }, (_, i) => BigInt(i + 1)).reduce(
-      (acc, curr) => acc * curr,
-      1n
-    );
-  };
+  for (let i = 2n; i <= n; i++) {
+    result *= i;
+  }
 
-  const factorial = GetFactorial({ n });
-  const NumArray = `${factorial}`.split("");
-
-  return NumArray.reduce((acc, element) => parseInt(acc) + parseInt(element));
+  return result;
 };
 
+const digitSum = (n) => {
+  const factorial = getFactorial(n);
+
+  const result = factorial
+    .toString()
+    .split("")
+    .map(Number)
+    .reduce((acc, element) => acc + element);
+
+  return result;
+};
 digitSum(10);
 digitSum(42);
 digitSum(71);
@@ -173,11 +179,14 @@ Because the 12th index in the Fibonacci sequence is 144, and 144 has three digit
 ***** */
 
 function fibIndex(n) {
-  let fib = [0n, 1n];
+  let a = 0n;
+  let b = 1n;
   let index = 0;
 
-  for (let i = 2; fib[fib.length - 1].toString().length != n; i++) {
-    fib.push(fib[i - 1] + fib[i - 2]);
+  for (let i = 1; b.toString().length < n; i++) {
+    let temp = b;
+    b = a + b;
+    a = temp;
     index++;
   }
 
