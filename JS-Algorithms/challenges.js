@@ -141,13 +141,13 @@ const getFactorial = (n) => {
 const digitSum = (n) => {
   const factorial = getFactorial(n);
 
-  const result2 = 0;
+  let result = 0;
 
   for (const elm of factorial.toString()) {
-    result2 += parseInt(elm);
+    result += parseInt(elm);
   }
 
-  return result2;
+  return result;
 };
 
 digitSum(10);
