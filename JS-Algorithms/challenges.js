@@ -19,11 +19,9 @@ const readableTime = (seconds) => {
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = seconds % 60;
 
-  const formattedHours = getFormattedNumber(hours);
-  const formattedMinutes = getFormattedNumber(minutes);
-  const formattedSeconds = getFormattedNumber(remainingSeconds);
-
-  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  return `${getFormattedNumber(hours)}:${getFormattedNumber(
+    minutes
+  )}:${getFormattedNumber(remainingSeconds)}`;
 };
 
 readableTime(458);
@@ -50,23 +48,15 @@ Invoking "circularArray(2)" should return "["Island", "Japan", "Israel", "German
 
 const COUNTRY_NAMES = ["Germany", "Norway", "Island", "Japan", "Israel"];
 
-const getIndex = (oldIndex, countryNamesLength) =>
-  oldIndex > countryNamesLength ? oldIndex % countryNamesLength : oldIndex;
-
 const circularArray = (index) => {
-  const countryCopy = [...COUNTRY_NAMES];
-  const countryNamesLength = countryCopy.length;
+  if (index === COUNTRY_NAMES.length) return [...COUNTRY_NAMES];
 
-  if (index === countryNamesLength) return [...countryCopy];
+  const indexToReplace = index % COUNTRY_NAMES.length;
 
-  const indexToReplace = getIndex(index, countryNamesLength);
+  const splicedItemsFront = COUNTRY_NAMES.slice(0, indexToReplace);
+  const splicedItemsBack = COUNTRY_NAMES.slice(indexToReplace);
 
-  const splicedItems = countryCopy.slice(0, indexToReplace);
-  const filteredItems = countryCopy.filter(
-    (item) => !splicedItems.includes(item)
-  );
-
-  return [...filteredItems, ...splicedItems];
+  return [...splicedItemsBack, ...splicedItemsFront];
 };
 
 circularArray(2);
@@ -151,14 +141,15 @@ const getFactorial = (n) => {
 const digitSum = (n) => {
   const factorial = getFactorial(n);
 
-  const result = factorial
-    .toString()
-    .split("")
-    .map(Number)
-    .reduce((acc, element) => acc + element);
+  const result2 = 0;
 
-  return result;
+  for (const elm of factorial.toString()) {
+    result2 += parseInt(elm);
+  }
+
+  return result2;
 };
+
 digitSum(10);
 digitSum(42);
 digitSum(71);
